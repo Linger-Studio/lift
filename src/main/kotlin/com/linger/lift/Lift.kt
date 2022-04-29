@@ -3,9 +3,19 @@ package com.linger.lift
 import com.linger.lift.util.TweetNaclFast
 import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
+import org.bouncycastle.util.encoders.Base64
 import java.io.ByteArrayOutputStream
 
 object Lift {
+    @JvmStatic
+    fun generateWalletKeyPair(): WalletKeyPair {
+        val keyPair = TweetNaclFast.Signature.keyPair()
+        return WalletKeyPair(
+            publicKey = Base58.encode(keyPair.publicKey),
+            secretKey = Base64.encode(keyPair.secretKey).decodeToString()
+        )
+    }
+
     fun generateAddress(vararg seeds: ByteArray, programId: String): String {
         val header = concat(*seeds, limit = 32)
         val tail = concat(
